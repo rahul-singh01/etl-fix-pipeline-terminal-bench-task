@@ -203,29 +203,64 @@ bad line not in CLF
 
 ## 🚀 Quick Start Guide
 
-### **Option 1: Docker (Recommended)**
+### **For Solvers (Docker - Recommended)**
 ```bash
 # Build the container
 docker build -t etl-task .
 
-# Run tests to see current failures
+# Run tests to see current failures (baseline should fail)
 docker run --rm etl-task ./run-tests.sh
 
 # Interactive debugging session
 docker run --rm -it etl-task bash
+
+# Test your fixed processor.sh
+docker run --rm -v "$(pwd)/processor.sh:/workspace/processor.sh" etl-task ./run-tests.sh
 ```
 
-### **Option 2: Local Development**
+### **For Task Authors/Contributors (Local Development)**
+
+#### **Option 1: Virtual Environment (Recommended)**
 ```bash
+# Create and activate virtual environment
+python3 -m venv venv
+source venv/bin/activate
+
 # Install test dependencies
-pip3 install -r requirements.txt
+pip install -r requirements.txt
+
+# Verify oracle solution works (should pass 100%)
+cp solution.sh processor.sh && ./run-tests.sh
+
+# Test broken baseline (should fail)
+git checkout processor.sh && ./run-tests.sh
+
+# Deactivate when done
+deactivate
+```
+
+#### **Option 2: System Package**
+```bash
+# Install pytest system-wide
+sudo apt install python3-pytest
 
 # Run tests
 ./run-tests.sh
+```
 
-# Debug individual test cases
-bash -x processor.sh data/access_simple.log /tmp/output.csv
-cat /tmp/output.csv
+### **Oracle Verification (Task Authors Only)**
+```bash
+# Test oracle solution directly
+./solution.sh data/access_simple.log /tmp/oracle.csv
+cat /tmp/oracle.csv
+
+# Verify oracle passes all tests
+cp solution.sh processor.sh && ./run-tests.sh
+# Should show: 6 passed
+
+# Verify baseline fails
+git checkout processor.sh && ./run-tests.sh  
+# Should show: 6 failed
 ```
 
 ---
