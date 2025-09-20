@@ -61,7 +61,7 @@ ehthumbs.db
 Thumbs.db
 
 # Docker
-.dockerignore
+# .dockerignore
 
 # Temporary files
 *.tmp
