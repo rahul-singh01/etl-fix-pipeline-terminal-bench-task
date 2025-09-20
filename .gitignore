@@ -93,3 +93,6 @@ node_modules/
 /tasks/*/temp_*
 /tasks/*/*.csv
 !/tasks/*/solution.sh
+
+# Virtual environments in task directories
+/tasks/*/venv/
