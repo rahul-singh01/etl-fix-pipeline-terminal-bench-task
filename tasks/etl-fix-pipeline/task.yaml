@@ -1,0 +1,32 @@
+id: etl-fix-pipeline
+title: Fix a broken terminal-first ETL that aggregates webserver bytes per IP
+domain: Terminal-Heavy ETL / DevOps
+context: |
+  You are given a small corpus of webserver logs in Common Log Format. A baseline shell script (processor.sh) is intended to extract client IPs and response byte counts, aggregate bytes per IP, and produce a CSV report sorted by total bytes (descending). The baseline script is buggy and fails on quoted requests, '-' bytes, empty/malformed lines, and does not produce the exact required output format.
+objective: |
+  Fix processor.sh so that running:
+    ./processor.sh data/access_simple.log outputs/top_ips.csv
+  produces a CSV with header and rows: ip,total_bytes sorted by total_bytes desc, tie-broken by ip asc.
+constraints:
+  - Tools allowed: bash, awk/gawk, coreutils, sed, sort (no Python for core ETL).
+  - Tests and grading should be deterministic.
+  - No network access required by the task.
+max_agent_timeout_sec: 300
+max_test_timeout_sec: 120
+acceptance_criteria:
+  - AC1: Produces a CSV file with header "ip,total_bytes".
+  - AC2: Correctly aggregates bytes per IP (treat '-' as 0).
+  - AC3: Handles requests containing spaces or commas (i.e., parsing must not break on quoted request fields).
+  - AC4: Ignores malformed or empty lines without crashing.
+  - AC5: Output sorted by total_bytes desc, tie-break by IP asc (deterministic).
+  - AC6: All provided sample inputs covered by tests (≥6 tests).
+inputs:
+  - data/access_simple.log
+  - data/access_quoted.log
+  - data/access_dashbytes.log
+  - data/access_malformed.log
+  - data/access_blank.log
+outputs:
+  - CSV file at path specified by the first CLI arg (or default ./output/top_ips.csv) with header and aggregated rows.
+notes: |
+  Tests will call processor.sh with an input file path and an output path. The baseline processor.sh is intentionally broken. Provide a README with quickstart notes.
